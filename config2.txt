@@ -1,0 +1,410 @@
+# CONFIG FOR bushing finishing
+#
+# NOTE Lines must not exceed 132 characters, and '#' characters mean what follows is ignored
+## Robot module configurations : general handling of movement G-codes and slicing into moves
+######################## Basic USB port settings ########################
+
+usb_uart_baudrate                                       250000
+
+######################## Basic motion configuration ########################
+
+single_head   				     			  true
+
+default_feed_rate_mmps                        85             			# Default speed (mm/sec) for G1/G2/G3 moves
+default_seek_rate_mmps                        8              			# Default speed (mm/sec) for G0 moves
+																		
+# Arm solution configuration : Cartesian robot. Translates mm positions into stepper positions
+arm_solution                                  cartesian		  			# Тип кинематики
+alpha_steps_per_mm                            83               			# Steps per mm for alpha ( X ) stepper
+beta_steps_per_mm                             82               			# Steps per mm for beta ( Y ) stepper
+gamma_steps_per_mm                            160             			# Steps per mm for gamma ( Z ) stepper
+
+# Planner module configuration : Look-ahead and acceleration configuration
+acceleration                                  300             			# Acceleration in mm/s^2
+z_acceleration                                1              			# Acceleration for Z only moves in mm/s^2, 0 uses acceleration which is the default. DO NOT SET ON A DELTA
+junction_deviation                            0.027             		# 
+
+# Cartesian axis speed limits
+x_axis_max_speed_mmps                         20            			# Maximum speed in mm/sec
+y_axis_max_speed_mmps                         20            			# Maximum speed in mm/sec
+z_axis_max_speed_mmps                         51             			# Maximum speed in mm/sec
+
+alpha_acceleration                            300						# Acceleration in mm/s^2
+beta_acceleration                             300						# Acceleration in mm/s^2
+gamma_acceleration                            100						# Acceleration in mm/s^2
+
+
+######################## Stepper module configuration ########################
+# Pins are defined as  ports, and pin numbers, appending "!" to the number will invert a pin
+
+# X Axis stepper configuration
+alpha_step_pin                                d.13              		# Pin for alpha/X stepper step signal
+alpha_dir_pin                                 d.14              		# Pin for alpha/X stepper direction, add '!' to reverse direction
+alpha_en_pin                                  d.15              		# Pin for alpha/X enable pin
+alpha_max_rate_mmps                           200           			# Maximum rate in mm/sec
+
+# Y Axis stepper configuration
+beta_step_pin                              	  e.8              			# Pin for beta/Y stepper step signal
+beta_dir_pin                               	  e.7!              		# Pin for beta/Y stepper direction, add '!' to reverse direction
+beta_en_pin                                	  e.10              		# Pin for beta/Y enable pin
+beta_max_rate_mmps                            200           			# Maximum rate in mm/sec
+
+# Z Axis stepper configuration
+gamma_step_pin                                d.3             			# Pin for gamma/Z stepper step signal
+gamma_dir_pin                                 d.7             			# Pin for gamma/Z stepper direction, add '!' to reverse direction
+gamma_en_pin                                  d.4             			# Pin for gamma/Z enable
+gamma_max_rate_mmps                           5.0          				# Maxmimum rate in mm/sec
+
+
+######################## Extruder module configuration ########################
+
+extruder.hotend.enable                        true          			# Whether to activate the extruder module at all. All configuration is ignored if false
+extruder.hotend.steps_per_mm                  148.50           			# Steps per mm for extruder stepper
+extruder.hotend.default_feed_rate_mmps        100            			# Default rate ( mm/sec ) for moves where only the extruder moves
+extruder.hotend.acceleration                  10000           			# Acceleration for the stepper motor mm/s^2
+extruder.hotend.max_speed                     100            			# Maximum speed in mm/s
+
+extruder.hotend.step_pin                      c.2          				# Pin for extruder step signal
+extruder.hotend.dir_pin                       c.1          				# Pin for extruder dir signal ( add '!' to reverse direction )
+extruder.hotend.en_pin                        c.0          				# Pin for extruder enable signal
+
+# Extruder offset
+extruder.hotend.x_offset                      0           				# X offset from origin in mm
+extruder.hotend.y_offset                      0           				# Y offset from origin in mm
+extruder.hotend.z_offset                      0            				# Z offset from origin in mm
+extruder.hotend.tool_number                   0  
+
+
+######################## Temperature control configuration ########################
+
+# First hotend configuration
+temperature_control.hotend.enable            	false             		# Whether to activate this ( "hotend" ) module at all.
+temperature_control.hotend.sensor            	thermistor				# Тип датчика
+temperature_control.hotend.thermistor_pin    	a.0              		# Pin for the thermistor to read
+temperature_control.hotend.heater_pin        	e.14             		# Pin that controls the heater, set to nc if a readonly thermistor is being defined
+temperature_control.hotend.use_hwpwm            true					# Использовать аппаратный ШИМ
+temperature_control.hotend.thermistor        	Semitec		  			# Thermistor type 
+temperature_control.hotend.set_m_code        	104              		# M-code to set the temperature for this module
+temperature_control.hotend.set_and_wait_m_code 	109            			# M-code to set-and-wait for this module
+temperature_control.hotend.designator        	T0               		# Designator letter for this module
+temperature_control.hotend.max_temp          	30              		# Set maximum temperature - Will prevent heating above 300 by default
+temperature_control.hotend.thermal_overshoot    5						# Температура на которую может перегреться нагревательный элемент, без срабатывания защиты Max_Temp
+temperature_control.hotend.min_temp          	5                		# Set minimum temperature - Will prevent heating below if set
+minimal_extrusion_temp			    		    50						# Температура, ниже которой отключается вращение подающего механизма
+
+# Safety control is enabled by default and can be overidden here, the values show the defaults
+temperature_control.hotend.target_temp_safezone         	2			# Величина допустимого диапазона недогрева при котором нагрев с ожиданием можно считать законченым 
+
+# Слежение за интенсивностью нагрева во время преднагрева
+temperature_control.hotend.heating_watch_temp_period      	40			# Время за которое температура должна измениться на xx градусов. Режим преднагрева.
+temperature_control.hotend.heating_watch_temp_increase    	10			# Значение температуры, градусы C.
+
+# Слежение за интенсивностью нагрева, во время процесса печати. 
+temperature_control.hotend.thermal_protection_period      	60			# Время за которое температура должна вернуться в диапазон разрешенный допустимым отклонением
+temperature_control.hotend.thermal_protection_hysteresis  	15			# Допустимое отклонение температуры
+
+temperature_control.hotend.runaway_heating_timeout      	600     		# How long it can take to heat up, max is 2040 seconds.
+temperature_control.hotend.runaway_cooling_timeout      	0     			# How long it can take to cool down if temp is set lower, max is 2040 seconds
+temperature_control.hotend.runaway_range                	0    			# How far from the set temperature it can wander, max setting is 63?C
+
+
+# PID configuration first hotend
+temperature_control.hotend.p_factor         	19.32            		# P ( proportional ) factor
+temperature_control.hotend.i_factor         	0.402            		# I ( integral ) factor
+temperature_control.hotend.d_factor         	178.77              	# D ( derivative ) factor
+temperature_control.hotend.pidtype2            	true                	# Proportional on Measurement  not on Error!
+temperature_control.hotend.PonE_weight          0.6						# Поправочный коэффициент при работе PID2
+temperature_control.hotend.pid_distance         30               		# PID distance - там где работает пид
+temperature_control.hotend.min_pwm				15						# Минимальная мощьность нагревателя. 0-255
+temperature_control.hotend.min_set_temp         50						# С какой температуры начинаем выбор преднагрева.
+temperature_control.hotend.M105_answer 		T
+
+# Heating bed configuration
+temperature_control.bed.enable               	true             		# Whether to activate this ( "hotend" ) module at all.
+temperature_control.bed.thermistor_pin       	a.2              		# Pin for the thermistor to read
+temperature_control.bed.heater_pin           	c.8              		# Pin that controls the heater
+temperature_control.bed.thermistor           	EPCOS100KUUU    	  		# Thermistor type
+temperature_control.bed.set_m_code           	140              		# M-code to set the temperature for this module
+temperature_control.bed.set_and_wait_m_code  	190              		# M-code to set-and-wait for this module
+temperature_control.bed.designator           	B                		# Designator letter for this module
+temperature_control.bed.pidtype2             	true 					# Fast PID type
+temperature_control.bed.pid_distance         	6               		# PID distance - там где работает пид
+temperature_control.bed.max_temp             	120              		# Set maximum temperature - Will prevent heating above 300 by default
+
+# Bang-bang ( simplified ) control
+temperature_control.bed.bang_bang            	false            		# Set to true to use bang bang control rather than PID
+temperature_control.bed.hysteresis           	0.5              		# Set to the temperature in degrees C to use as hysteresis
+
+# PID Bed control
+temperature_control.bed.p_factor          		178.3           			# P ( proportional ) factor
+temperature_control.bed.i_factor          		20.256          			# I ( integral ) factor
+temperature_control.bed.d_factor          		392            			# D ( derivative ) factor
+
+# Safety control is enabled by default and can be overidden here, the values show the defaults
+temperature_control.bed.target_temp_safezone         	2			# Величина допустимого колебания температуры, при которой не срабатывает защита
+
+# Слежение за интенсивностью нагрева во время преднагрева
+temperature_control.bed.heating_watch_temp_period      	60			# Время за которое температура должна измениться на "heating_watch_temp_increase" градусов. Сек.
+temperature_control.bed.heating_watch_temp_increase    	6			# Значение температуры, градусы C.
+
+# Слежение за интенсивностью нагрева, во время процесса печати. 
+temperature_control.bed.thermal_protection_period      	60			# Время за которое температура должна вернуться в диапазон разрешенный допустимым отклонением
+temperature_control.bed.thermal_protection_hysteresis  	15			# Допустимое отклонение температуры
+
+temperature_control.bed.runaway_heating_timeout      	600     	# How long it can take to heat up, max is 2040 seconds.
+temperature_control.bed.runaway_cooling_timeout      	0     		# How long it can take to cool down if temp is set lower, max is 2040 seconds
+temperature_control.bed.runaway_range                	0    		# How far from the set temperature it can wander, max setting is 63?C
+
+
+
+# automatically toggle a switch at a specified temperature
+# useful to turn on a fan or water pump to cool the hotend
+temperatureswitch.hotend.enable	             	true             		# enable this module
+temperatureswitch.hotend.switch                 fan_h             		# select which MOSFET to use, must match a switch configuration (fan2 below)
+temperatureswitch.hotend.designator             T                		# first character of the temperature control designator to use as the temperature sensor to monitor
+temperatureswitch.hotend.threshold_temp         50.0             		# temperature to turn on (if rising) or off the switch
+temperatureswitch.hotend.heatup_poll            5               		# poll heatup at 15 sec intervals
+temperatureswitch.hotend.cooldown_poll          15               		# poll cooldown at 60 sec intervals
+
+# Auto start the cooler of the electronics compartment
+temperatureswitch.elc.enable	             	true             		# enable this module
+temperatureswitch.elc.switch                 	fan2             		# select which MOSFET to use, must match a switch configuration (fan2 below)
+temperatureswitch.elc.designator             	DRIVER_ENABLE			# first character of the temperature control designator to use as the temperature sensor to monitor
+temperatureswitch.elc.heatup_poll            	5               		# poll heatup at 15 sec intervals
+temperatureswitch.elc.cooldown_poll          	15               		# poll cooldown at 60 sec intervals
+
+
+## Switch modules
+
+# Switch module for HotEnd fan control
+switch.fan_h.enable                          	true					# Enable this module
+switch.fan_h.input_on_command                 	M3106             		# Command that will turn this switch on
+switch.fan_h.input_off_command                	M3107             		# Command that will turn this switch off
+switch.fan_h.output_type                     	hwpwmooy						#
+switch.fan_h.output_pin                      	e.13					# Управляемый пин. Разъем Head2 для платы Cherry3d
+switch.fan_h.max_pwm                         	255						# Set max pwm for the pin default is 255
+switch.fan_h.ignore_on_halt  		    	 	true					#set to true to not set the failsafe or startup_value value when a HALT condition is triggered
+
+# Switch module for model fan control
+switch.fan0.enable                           	true             		# Enable this module
+switch.fan0.input_on_command                 	M106             		# Command that will turn this switch on
+switch.fan0.input_off_command                	M107             		# Command that will turn this switch off
+switch.fan0.output_pin                       	b.4              		# Pin this module controls
+switch.fan0.output_type                      	hwpwm              		# PWM output settable with S parameter in the input_on_comand
+switch.fan0.kickstart_time                   	100
+switch.fan0.queue_attached                      true
+
+# Switch module for box fan control
+switch.fan1.enable                           	true             		# Enable this module
+switch.fan1.input_on_command                 	M2106             		# Command that will turn this switch on
+switch.fan1.input_off_command                	M2107             		# Command that will turn this switch off
+switch.fan1.output_pin                       	e.9             		# Pin this module controls
+switch.fan1.output_type                      	hwpwmmmm              		# PWM output settable with S parameter in the input_on_comand
+#switch.fan1.kickstart_time                   	100
+switch.fan1.ignore_on_halt  		    	 	true
+
+# Switch module for electronics compartment fan control
+switch.fan2.enable                           	true             		# Enable this module
+switch.fan2.input_on_command                 	M1106             		# Command that will turn this switch on
+switch.fan2.input_off_command                	M1107             		# Command that will turn this switch off
+switch.fan2.output_pin                       	e.11             		# Pin this module controls
+switch.fan2.output_type                      	hwpwmfu             		# PWM output settable with S parameter in the input_on_comand
+switch.fan2.ignore_on_halt  		    	 	true
+
+# Switch module for light control
+switch.light.enable                          	true             		# Enable this module
+switch.light.input_on_command                	M355           			# Command that will turn this switch on
+switch.light.input_off_command              	M355 s0           		# Command that will turn this switch off
+switch.light.output_pin                      	b.5              		# Pin this module controls
+switch.light.output_type                     	hwpwm            		# PWM output settable with S parameter in the input_on_comand
+switch.light.pwm_period_ms                   	5
+switch.light.ignore_on_halt  		    	 	true
+
+filament_detector.enable	        			false		 			#This module is activated only if this is set to true
+filament_detector.encoder_pin	        		b.7	         			#This is the pin the encoder is connected to. Must be an interrupt pin (2.xx)  YMIN vse drugie ne poddergivaut preruwaniya
+filament_detector.encoder_sec_pin       		nc               		#This is the pin the encoder is connected on the second extruder. Must be an interrupt pin (2.xx)
+filament_detector.seconds_per_check				60               		#How many seconds between filament position checks, must be long enough for several pulses to be detected, but not too long
+#filament_detector.pulses_per_mm        		0.5              		#The number of pulses the encoder produces for every millimeter of filament movement
+filament_detector.minimal_mm_to_check			4
+
+
+########################EndStop and Houming Config########################
+
+## Endstops
+endstops_enable                              	true             		# The endstop module is enabled by default and can be disabled here
+corexy_homing                                	false            		# Set to true if homing on a hbot or corexy
+
+alpha_min_endstop                            	c.14   	      			# Pin to read min endstop, add a ! to invert if endstop is NO connected to ground
+#alpha_max_endstop                           	nc               		# Pin to read max endstop, uncomment this and comment the above if using max endstops
+alpha_homing_direction                       	home_to_min      		# Or set to home_to_max and set alpha_max and uncomment the alpha_max_endstop
+alpha_min                                    	0                		# This gets loaded as the current position after homing when home_to_min is set
+alpha_max                                    	200              		# This gets loaded as the current position after homing when home_to_max is set
+
+# Endstops home at their fast feedrate first, then once the endstop is found they home again at their slow feedrate for accuracy
+alpha_fast_homing_rate_mm_s                  	50              		# Alpha/X fast homing feedrate in mm/second
+alpha_slow_homing_rate_mm_s                  	30               		# Alpha/X slow homing feedrate in mm/second
+
+beta_min_endstop                             	c.13		      		# Pin to read min endstop, add a ! to invert if endstop is NO connected to ground
+#beta_max_endstop                            	nc     	      			# Pin to read max endstop, uncomment this and comment the above if using max endstops
+beta_homing_direction                        	home_to_min      		# Or set to home_to_max and set alpha_max and uncomment the alpha_max_endstop
+beta_min                                     	0                		# This gets loaded as the current position after homing when home_to_min is set
+beta_max                                     	200              		# This gets loaded as the current position after homing when home_to_max is set
+beta_fast_homing_rate_mm_s                   	50              		# Beta/Y  fast homing feedrate in mm/second
+beta_slow_homing_rate_mm_s                   	30               		# Beta/Y  slow homing feedrate in mm/second
+
+gamma_min_endstop                            	c.15v           		# Pin to read min endstop, add a ! to invert if endstop is NO connected to ground
+#gamma_max_endstop                           	nc               		# Pin to read max endstop, uncomment this and comment the above if using max endstops
+gamma_homing_direction                       	home_to_min      		# Or set to home_to_max and set alpha_max and uncomment the alpha_max_endstop
+gamma_min                                    	0                		# This gets loaded as the current position after homing when home_to_min is set
+gamma_max                                    	270              		# This gets loaded as the current position after homing when home_to_max is set
+gamma_fast_homing_rate_mm_s                  	5               		# Gamma/Z fast homing feedrate in mm/second
+gamma_slow_homing_rate_mm_s                  	2                		# Gamma/Z slow homing feedrate in mm/second
+
+alpha_homing_retract_mm                      	5                		# Distance to retract from the endstop after it is hit for alpha/X
+beta_homing_retract_mm                       	5                		# Distance to retract from the endstop after it is hit for beta/Y
+gamma_homing_retract_mm                      	5                		# Distance to retract from the endstop after it is hit for gamma/Z
+
+alpha_max_travel                             	2100              		# Max travel in mm for alpha/X axis when homing
+beta_max_travel                              	210              		# Max travel in mm for beta/Y axis when homing
+gamma_max_travel                             	280              		# Max travel in mm for gamma/Z axis when homing
+
+## Soft Endstops
+soft_endstop.enable         					true         			# Enable soft endstops
+soft_endstop.x_min          					0            			# Minimum X position
+soft_endstop.x_max          					200          			# Maximum X position
+
+soft_endstop.y_min          					0            			# Minimum Y position
+soft_endstop.y_max          					200          			# Maximum Y position
+
+soft_endstop.z_min          					0            			# Minimum Z position
+soft_endstop.z_max          					270          			# Maximum Z position
+
+soft_endstop.halt           					false         			# Whether to issue a HALT state when hitting a soft endstop (if false, will just ignore commands that would exceed the limit)
+
+# Optional enable limit switches, actions will stop if any enabled limit switch is triggered (all are set for delta)
+#alpha_limit_enable                          	true            		# Set to true to enable X min and max limit switches
+#beta_limit_enable                           	true            		# Set to true to enable Y min and max limit switches
+#gamma_limit_enable                          	true            		# Set to true to enable Z min and max limit switches
+
+# Optional order in which axis will home, default is they all home at the same time,
+# If this is set it will force each axis to home one at a time in the specified order
+homing_order                                 	XYZ              		# X axis followed by Y then Z last
+#move_to_origin_after_home                    	false            		# Move XY to 0,0 after homing
+#endstop_debounce_count                       	100              		# Uncomment if you get noise on your endstops, default is 100
+#endstop_debounce_ms                          	1                		# Uncomment if you get noise on your endstops, default is 1 millisecond debounce
+#home_z_first                                 	false             		# Uncomment and set to true to home the Z first, otherwise Z homes after XY
+
+
+
+########################Display Config########################
+# setup for external sd card on the LCD board
+
+panel.enable                                 	true             		# set to true to enable the panel code
+panel.lcd                                    	viki2            		# set type of panel
+panel.spi_channel                              	1              			# spi channel to use  spi_channel = 1  -> mosi = b.15; miso = b.14; sclk = b.13; 
+
+panel.spi_cs_pin                               	a.7            			# spi chip select     LCD_EN
+panel.a0_pin                                   	a.4            			# data/command select LCD_RS
+panel.rst_pin		    	   					a.5            			# reset panel         LCD_D4
+panel.contrast                                 	10             			# контраст 0-макс
+panel.reverse                                 	true            		# экран вверх ногами
+
+panel.encoder_a_pin                             e.0!^
+panel.encoder_b_pin                             e.1^
+panel.click_button_pin                          e.4!^
+panel.buzz_pin                                  e.5
+panel.system_sd_access                          true # false
+#panel.show_diagnostic                          false
+
+neopixel.enable			      					true
+
+#panel.encoder_invert   						true
+panel.timeroff                                  0
+
+########################Protection parameters and logging########################
+panel.checkfile									true										# Опция проверки файла на читаемость перед печатью.
+panel.max_checkfiletime 						0											# Максимальное время проверки файла в секундах. 0 - ограничение отключено.
+pause_on_reading_error 							true 										# Пауза печати, если обнаружина проблема с чтением файла. Либо если случайно извлекли носитель.
+
+error_logger.enable 							true										# Логирование ошибок во время печати
+
+########################Сhanging plastic########################
+retrieve_gcode                          G91|G1_E15_F1500|G1_E-50_F5000|G1_E-640_F4000|G90 		# Алгоритм извлечения пластика
+fill_gcode                              G91|G1_E640_F4000|G90								# Алгоритм заправки пластика
+
+########################Gcode execution########################
+
+#on_boot_gcode_enable   				true  
+#on_boot_gcode   						/sd/go.g
+after_suspend_gcode 					G91|G1_Z5_E-4|G90|G1_X50_Y10_F6000   				# Действие при паузе печати М600 - выключение нагрева, m601.1 Со включенными нагревателями.
+after_abort_gcode 						G91|G1_Z5_E-4|G90|G28_X_Y|M17|M107|M18	 			# Действие при остановки печати. (функция остановить/сбросить печать)
+after_play_gcode 						M107|M18 											# Действия после окончания печати.
+
+
+########################Driver Config########################
+
+# X Axis Driver
+simpledriver.drv1.enable	      				true
+simpledriver.drv1.type                			uart220x
+simpledriver.drv1.num    	      				1
+simpledriver.drv1.uart_pin    	      			4  						#pin number on driver for uart //  pin 4 or 5 // 4=ms3 5=pdn // default 4
+simpledriver.drv1.CHOPCONF                      0x10008103 				# marlin
+simpledriver.drv1.PWMCONF                       0xC40D0E24 				# marlin
+simpledriver.drv1.rsense          				0.11
+1simpledriver.drv1.run_ma          				1050 					#ток движения в mA  
+simpledriver.drv1.hold_ma         				600 					#ток удержания в mA
+simpledriver.drv1.microsteps      				16   					# Интерполяция
+simpledriver.drv1.TPWMTHRS        				0x00000046
+simpledriver.drv1.shortprotect                  true
+
+# Y Axis Driver
+simpledriver.drv2.enable	      				true
+simpledriver.drv2.type                			uart220x
+simpledriver.drv2.num   	      				2
+simpledriver.drv2.CHOPCONF                      0x10008103
+simpledriver.drv2.PWMCONF                       0xC40D0E24				
+simpledriver.drv2.rsense          				0.11
+simpledriver.drv2.run_ma          				1050 					#ток движения в mA 
+simpledriver.drv2.hold_ma         				600 					#ток удержания в mA
+simpledriver.drv2.microsteps      				16	
+simpledriver.drv2.TPWMTHRS        			    0x00000046
+simpledriver.drv2.shortprotect                  true
+
+
+# Z Axis Driver
+simpledriver.drv3.enable	      				true
+simpledriver.drv3.type                			uart
+simpledriver.drv3.num   	      				3
+simpledriver.drv3.PWMCONF                       0xC40D0E24
+simpledriver.drv3.microsteps      				16
+simpledriver.drv3.rsense          				0.11
+simpledriver.drv3.run_ma          				900 					#ток движения в mA   
+simpledriver.drv3.hold_ma         				400 					#ток удержания в mA
+simpledriver.drv3.TPWMTHRS        				0      					# block 2208 driver disable tmc bug
+simpledriver.drv3.shortprotect                  true
+
+# E0 Axis Driver
+simpledriver.drv4.enable	      				true
+simpledriver.drv4.type                 			uart
+simpledriver.drv4.num   	      				4
+simpledriver.drv4.microsteps      				16
+simpledriver.drv4.rsense          				0.11
+simpledriver.drv4.run_ma          				900 					#ток движения в mA 
+simpledriver.drv4.hold_ma         				600 					#ток удержания в mA
+simpledriver.drv4.TPWMTHRS        				0
+simpledriver.drv4.shortprotect                  true
+
+# E1 Axis Driver
+simpledriver.drv5.enable	      				false
+simpledriver.drv5.type                			uart220x
+simpledriver.drv5.num    	      				5
+simpledriver.drv5.microsteps          			16
+
+########################Preheat Config########################
+
+preheat.names                           PLA|ABS|PETG|Wax
+preheat.head_temps                      200|230|220|80
+preheat.bed_temps                       70|90|90|0
+
+
+keepalive_timeout 								0  						#   busy protocol M113
