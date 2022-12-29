@@ -15,20 +15,25 @@ def parametersExtractor(file):
         if len(splitline) > 1:
             params[splitline[0]] = splitline[1]
         else:
-            params[splitline[0]] = '–'  
+            params[splitline[0]] = '–'
     return params
 
 config1 = parametersExtractor(file1)
 config2 = parametersExtractor(file2)
 
-kset = set(config1.keys())
-kset.update(config2.keys())
+keys1 = list(config1.keys())
+keys2 = list(config2.keys())
+allkeys = list(keys1)
+
+for key in keys2:
+    if key not in allkeys:
+        allkeys.append(key)
 
 result = []
-for k in kset:
-    v1 = config1[k] if k in config1.keys() else '–'
-    v2 = config2[k] if k in config2.keys() else '–'
-    result.append([k, v1, v2])
+for key in allkeys:
+    value1 = config1[key] if key in keys1 else '–'
+    value2 = config2[key] if key in keys2 else '–'
+    result.append([key, value1, value2])
 
 resultable = tabulate(result, headers=['Parameters', 'Config 1', 'Config 2'])
 resultfilename = 'comparison.txt'
@@ -38,7 +43,7 @@ try:
 except PermissionError:
     print(f'No access permissions for {resultfilename}')
 except FileExistsError:
-    print(f'File {resultfilename} is already exists')
+    print(f'File {resultfilename} already exists')
 except Exception as err:
     print(f'Unexpected error opening {resultfilename} is',repr(err))
 else:
